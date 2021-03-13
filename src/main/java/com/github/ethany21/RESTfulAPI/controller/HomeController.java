@@ -50,5 +50,17 @@ public class HomeController {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<StudentException> handlerException(Exception exception){
+
+        StudentException error = new StudentException();
+
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        error.setMessage(error.getMessage());
+        error.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
 
 }
