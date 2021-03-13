@@ -32,35 +32,10 @@ public class HomeController {
     }
 
     @GetMapping("/test")
-    public List<String> strings(){
+    public List<String> strings() {
 
         return strings;
 
     }
-
-    @ExceptionHandler
-    public ResponseEntity<StudentException> handlerException(CustomException exception){
-
-        StudentException error = new StudentException();
-
-        error.setStatus(HttpStatus.NOT_FOUND.value());
-        error.setMessage(error.getMessage());
-        error.setTimeStamp(System.currentTimeMillis());
-
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<StudentException> handlerException(Exception exception){
-
-        StudentException error = new StudentException();
-
-        error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setMessage(error.getMessage());
-        error.setTimeStamp(System.currentTimeMillis());
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
 
 }
