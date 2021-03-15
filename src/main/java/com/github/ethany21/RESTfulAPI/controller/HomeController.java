@@ -38,4 +38,11 @@ public class HomeController {
 
     }
 
+    @PostMapping("/save")
+    public String postStrings(@RequestBody String string){
+
+        strings.add(string);
+
+        return string;
+    }
 }
