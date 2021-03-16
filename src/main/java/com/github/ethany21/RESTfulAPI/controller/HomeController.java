@@ -1,48 +1,29 @@
 package com.github.ethany21.RESTfulAPI.controller;
 
-import com.github.ethany21.RESTfulAPI.exception.CustomException;
-import com.github.ethany21.RESTfulAPI.exception.StudentException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.github.ethany21.RESTfulAPI.model.Customer;
+import com.github.ethany21.RESTfulAPI.service.interfaces.CustomerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class HomeController {
 
-    private List<String> strings = new ArrayList<>();
-
-    @PostConstruct
-    public void loadData(){
-        strings.add("test");
-        strings.add("for");
-        strings.add("RESTful API");
-    }
+    private final CustomerService customerService;
 
     @GetMapping("/test/{studentId}")
-    public String strings(@PathVariable int studentId){
-
-        if((studentId) >= strings.size() || (studentId < 0)){
-            throw new CustomException("Student id not found - " + studentId);
-        }
-        return strings.get(studentId);
+    public Customer strings(@PathVariable long studentId){
+        return customerService.findById(studentId);
     }
 
     @GetMapping("/test")
-    public List<String> strings() {
-
-        return strings;
-
+    public List<Customer> strings() {
+        return customerService.findAll();
     }
 
     @PostMapping("/save")
-    public String postStrings(@RequestBody String string){
-
-        strings.add(string);
-
-        return string;
+    public Customer postStrings(@RequestBody Customer customer){
+        return customerService.save(customer);
     }
 }
