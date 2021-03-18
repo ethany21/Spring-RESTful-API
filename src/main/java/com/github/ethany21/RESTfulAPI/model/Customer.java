@@ -25,4 +25,7 @@ public class Customer {
 
     private String email;
 
+    @Enumerated(value = EnumType.STRING)
+    private Gender gender;
+
 }
