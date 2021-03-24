@@ -1,6 +1,7 @@
 package com.github.ethany21.RESTfulAPI.controller;
 
 import com.github.ethany21.RESTfulAPI.exception.CustomException;
+import com.github.ethany21.RESTfulAPI.exception.StudentException;
 import com.github.ethany21.RESTfulAPI.model.Customer;
 import com.github.ethany21.RESTfulAPI.service.interfaces.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ public class HomeController {
     private final CustomerService customerService;
 
     @GetMapping("/test/{customerId}")
-    public Customer customer(@PathVariable long customerId){
+    public Customer customer(@PathVariable long customerId) throws CustomException{
         return customerService.findById(customerId).orElseThrow(() -> new CustomException("Customer Not found with id " + customerId));
     }
 
