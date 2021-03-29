@@ -24,8 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = HomeController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class HomeControllerTest {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -52,7 +55,7 @@ class HomeControllerTest {
         customer.setGender(gender);
         customer.setEmail(email);
 
-        String url = "http://localhost:8080/save";
+        String url = "http://localhost:" + port + "/save";
 
         ResponseEntity<Long> responseEntity= restTemplate.postForEntity(url, customer, Long.class);
 
