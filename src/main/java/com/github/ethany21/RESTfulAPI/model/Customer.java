@@ -1,9 +1,6 @@
 package com.github.ethany21.RESTfulAPI.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -28,4 +25,11 @@ public class Customer {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
+    @Builder
+    public Customer(String firstName, String lastName, String email, Gender gender) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.gender = gender;
+    }
 }
