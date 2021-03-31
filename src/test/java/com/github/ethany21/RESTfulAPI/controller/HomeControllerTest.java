@@ -8,12 +8,15 @@ import org.junit.After;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -21,10 +24,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(HomeController.class)
 class HomeControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @LocalServerPort
     private int port;
@@ -77,7 +86,24 @@ class HomeControllerTest {
     }
 
     @Test
-    void createCustomer() {
+    void createCustomer() throws Exception{
+
+        String firstName = "Daniel";
+        String lastName = "Windsor";
+        String email = "daniel@gmail.com";
+        Gender gender = Gender.MALE;
+
+        CustomerDto customer = CustomerDto.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .gender(gender)
+                .build();
+
+        mockMvc.perform(post("/save"))
+//                .param(customer))
+                .andExpect(status().isOk());
+
     }
 
     @Test
