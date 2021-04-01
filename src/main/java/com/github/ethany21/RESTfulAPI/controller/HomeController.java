@@ -23,7 +23,7 @@ public class HomeController {
         return customerService.findAll();
     }
 
-    @PostMapping("/save")
+    @PostMapping(value = "/save")
     public Customer createCustomer(@RequestBody Customer customer){
         return customerService.save(customer);
     }
