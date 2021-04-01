@@ -47,6 +47,4 @@ public class HomeController {
         customerService.deleteById(id);
 
     }
-
-
 }

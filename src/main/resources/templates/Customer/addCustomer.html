@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="container">
+    <form>
+        <table>
+            <tbody>
+            <tr>
+                <td><label>firstName: </label></td>
+                <td><input type="text" id="firstName" placeholder="이름을 입력하세요"/></td>
+            </tr>
+            <tr>
+                <td><label>lastName: </label></td>
+                <td><input type="text" id="lastName" placeholder="성을 입력하세요" /></td>
+            </tr>
+            <tr>
+                <td><label>Email: </label></td>
+                <td><input type="text" id="email" placeholder="이메일 주소를 입력하세요"/></td>
+            </tr>
+            <tr>
+                <td><label>Gender: </label></td>
+                <td><select id="gender">
+                    <option th:each="genderValue : ${T(com.github.ethany21.RESTfulAPI.model.Gender).values()}"
+                            th:value="${genderValue.name()}"
+                            th:text="${genderValue.name()}">
+                        val
+                    </option>
+                </select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <a th:href="@{/index}" role="button" class="btn btn-secondary">취소</a>
+    <button type="button" class="btn btn-primary" id="btn-save">등록</button>
+</div>
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/js/customer.js"></script>
+
+</body>
+</html>
