@@ -5,9 +5,13 @@ import com.github.ethany21.RESTfulAPI.dto.CustomerDto;
 import com.github.ethany21.RESTfulAPI.model.Customer;
 import com.github.ethany21.RESTfulAPI.model.Gender;
 import com.github.ethany21.RESTfulAPI.repository.CustomerRepository;
+import com.github.ethany21.RESTfulAPI.service.interfaces.CustomerService;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,12 +23,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.MultiValueMap;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +47,9 @@ class HomeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Mock
+    CustomerService customerService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -54,6 +66,16 @@ class HomeControllerTest {
     @After
     public void tearDown() throws Exception{
         customerRepository.deleteAll();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+
+        HomeController controller = new HomeController(customerService);
+
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+
     }
 
     @Test
@@ -123,6 +145,15 @@ class HomeControllerTest {
     }
 
     @Test
-    void deleteCustomer() {
+    void deleteCustomer() throws Exception{
+
+        System.out.println(customerRepository.findById(0l));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete("/delete/{customerId}", 0l)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
     }
 }
