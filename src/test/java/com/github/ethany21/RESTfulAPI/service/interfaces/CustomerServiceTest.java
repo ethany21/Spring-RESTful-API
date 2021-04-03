@@ -1,33 +1,31 @@
 package com.github.ethany21.RESTfulAPI.service.interfaces;
 
+import com.github.ethany21.RESTfulAPI.model.Customer;
+import com.github.ethany21.RESTfulAPI.model.Gender;
 import com.github.ethany21.RESTfulAPI.repository.CustomerRepository;
 import com.github.ethany21.RESTfulAPI.service.CustomerServiceImpl;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import static org.junit.jupiter.api.Assertions.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.rmi.CORBA.StubDelegate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
 
     @Mock
     private CustomerRepository customerRepository;
-    private AutoCloseable autoCloseable;
     private CustomerService customerService;
 
     @BeforeEach
     void setUp(){
-
-        autoCloseable = MockitoAnnotations.openMocks(this);
         customerService = new CustomerServiceImpl(customerRepository);
-
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        autoCloseable.close();
     }
 
     @Test
@@ -38,6 +36,30 @@ class CustomerServiceTest {
 
         //then
         verify(customerRepository).findAll();
+    }
+
+    @Test
+    void addCustomer(){
+
+
+        //setup
+        Customer customer = new Customer();
+        customer.builder()
+                .firstName("kayne")
+                .lastName("frank")
+                .email("frank@gmail.com")
+                .gender(Gender.MALE)
+                .build();
+
+
+        //when
+        customerService.save(customer);
+
+        //then
+        ArgumentCaptor<Customer>customerArgumentCaptor=
+                ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(customerArgumentCaptor.capture());
+
     }
 
 }
