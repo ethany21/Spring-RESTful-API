@@ -4,6 +4,8 @@ import com.github.ethany21.RESTfulAPI.model.Customer;
 import com.github.ethany21.RESTfulAPI.model.Gender;
 import com.github.ethany21.RESTfulAPI.repository.CustomerRepository;
 import com.github.ethany21.RESTfulAPI.service.CustomerServiceImpl;
+import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,11 @@ class CustomerServiceTest {
     @BeforeEach
     void setUp(){
         customerService = new CustomerServiceImpl(customerRepository);
+    }
+
+    @AfterEach
+    void clean(){
+        customerRepository.deleteAll();
     }
 
     @Test
@@ -60,6 +67,34 @@ class CustomerServiceTest {
                 ArgumentCaptor.forClass(Customer.class);
         verify(customerRepository).save(customerArgumentCaptor.capture());
 
+        Customer capturedCustomer = customerArgumentCaptor.getValue();
+
+        assertThat(capturedCustomer).isEqualTo(customer);
+
+    }
+
+    @Test
+    void checkDeleteCustomer(){
+        Customer customer = new Customer();
+        customer.builder()
+                .firstName("kayne")
+                .lastName("frank")
+                .email("frank@gmail.com")
+                .gender(Gender.MALE)
+                .build();
+
+
+        //when
+        customerService.save(customer);
+
+        System.out.println(customerService.save(customer));
+
+        customerService.delete(customer);
+        ArgumentCaptor<Customer>customerArgumentCaptor=
+                ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).delete(customerArgumentCaptor.capture());
+        System.out.println(customerService.findAll());
+        assertThat(customerService.findAll().size()).isEqualTo(0);
     }
 
 }
