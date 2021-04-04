@@ -12,10 +12,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.rmi.CORBA.StubDelegate;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,14 +33,40 @@ class CustomerServiceTest {
     private CustomerRepository customerRepository;
     private CustomerService customerService;
 
+    Customer customer;
+
+    private static Logger logger = LoggerFactory.getLogger(CustomerServiceTest.class);
+
     @BeforeEach
     void setUp(){
         customerService = new CustomerServiceImpl(customerRepository);
+
+        customer = new Customer();
+
+        customer.setFirstName("kayne");
+        customer.setLastName("frank");
+        customer.setEmail("frank@gmail.com");
+        customer.setGender(Gender.MALE);
     }
 
     @AfterEach
     void clean(){
         customerRepository.deleteAll();
+    }
+
+
+    @Test
+    @Transactional
+    public void testFindByFirstName(){
+
+        customerRepository.save(customer);
+
+        logger.info("*** test FindById Method ***");
+
+        List<Customer> foundCustomer = customerRepository.findByFirstName(customer.getFirstName());
+        assertThat(foundCustomer).isNotEmpty();
+        logger.info("result is : " + foundCustomer.get(0).toString());
+
     }
 
     @Test
@@ -47,16 +81,6 @@ class CustomerServiceTest {
 
     @Test
     void addCustomer(){
-
-
-        //setup
-        Customer customer = new Customer();
-        customer.builder()
-                .firstName("kayne")
-                .lastName("frank")
-                .email("frank@gmail.com")
-                .gender(Gender.MALE)
-                .build();
 
 
         //when
@@ -75,25 +99,15 @@ class CustomerServiceTest {
 
     @Test
     void checkDeleteCustomer(){
-        Customer customer = new Customer();
-        customer.builder()
-                .firstName("kayne")
-                .lastName("frank")
-                .email("frank@gmail.com")
-                .gender(Gender.MALE)
-                .build();
 
 
         //when
         customerService.save(customer);
 
-        System.out.println(customerService.save(customer));
-
         customerService.delete(customer);
         ArgumentCaptor<Customer>customerArgumentCaptor=
                 ArgumentCaptor.forClass(Customer.class);
         verify(customerRepository).delete(customerArgumentCaptor.capture());
-        System.out.println(customerService.findAll());
         assertThat(customerService.findAll().size()).isEqualTo(0);
     }
 

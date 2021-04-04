@@ -45,4 +45,14 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteById(Long aLong) {
         customerRepository.deleteById(aLong);
     }
+
+    @Override
+    public List<Customer> findByFirstName(String firstName) {
+
+        List<Customer> customers = new ArrayList<>();
+
+        customerRepository.findByFirstName(firstName).forEach(customers::add);
+
+        return customers;
+    }
 }
