@@ -43,5 +43,7 @@ public class Dataload implements CommandLineRunner {
         customerService.save(customer2);
         customerService.save(customer3);
 
+        System.out.println(customerService.findAll().size());
+
     }
 }

@@ -4,6 +4,7 @@ import com.github.ethany21.RESTfulAPI.model.Customer;
 import com.github.ethany21.RESTfulAPI.model.Gender;
 import com.github.ethany21.RESTfulAPI.repository.CustomerRepository;
 import com.github.ethany21.RESTfulAPI.service.CustomerServiceImpl;
+import lombok.AllArgsConstructor;
 import org.junit.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,7 @@ class CustomerServiceTest {
     private CustomerRepository customerRepository;
     private CustomerService customerService;
 
+    @Autowired
     Customer customer;
 
     private static Logger logger = LoggerFactory.getLogger(CustomerServiceTest.class);
@@ -47,6 +49,7 @@ class CustomerServiceTest {
         customer.setLastName("frank");
         customer.setEmail("frank@gmail.com");
         customer.setGender(Gender.MALE);
+        customerService.save(customer);
     }
 
     @AfterEach
@@ -72,11 +75,23 @@ class CustomerServiceTest {
     @Test
     void getAllCustomers(){
 
+        customerService = new CustomerServiceImpl(customerRepository);
+
+        customer = new Customer();
+
+        customer.setFirstName("kayne");
+        customer.setLastName("frank");
+        customer.setEmail("frank@gmail.com");
+        customer.setGender(Gender.MALE);
+        customerService.save(customer);
+
         //when
         customerService.findAll();
 
         //then
         verify(customerRepository).findAll();
+
+        System.out.println(customerService.findAll().size());
     }
 
     @Test
