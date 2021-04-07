@@ -34,16 +34,13 @@ class CustomerServiceTest {
     private CustomerRepository customerRepository;
     private CustomerService customerService;
 
-    @Autowired
-    Customer customer;
-
     private static Logger logger = LoggerFactory.getLogger(CustomerServiceTest.class);
 
     @BeforeEach
     void setUp(){
         customerService = new CustomerServiceImpl(customerRepository);
 
-        customer = new Customer();
+        Customer customer = new Customer();
 
         customer.setFirstName("kayne");
         customer.setLastName("frank");
@@ -62,12 +59,26 @@ class CustomerServiceTest {
     @Transactional
     public void testFindByFirstName(){
 
-        customerRepository.save(customer);
+        String firstName = "kanye";
+        String lastName = "frank";
+        String email = "frank@gmail.com";
+        Gender gender = Gender.MALE;
+
+        customerRepository.save(Customer.builder()
+            .firstName(firstName)
+            .lastName(lastName)
+            .email(email)
+            .gender(gender)
+            .build()
+        );
 
         logger.info("*** test FindById Method ***");
 
-        List<Customer> foundCustomer = customerRepository.findByFirstName(customer.getFirstName());
-        assertThat(foundCustomer).isNotEmpty();
+        List<Customer> foundCustomer = customerRepository.findAll();
+
+        Customer customer = foundCustomer.get(0);
+
+        assertThat(customer.getFirstName()).isEqualTo(firstName);
         logger.info("result is : " + foundCustomer.get(0).toString());
 
     }
@@ -77,7 +88,7 @@ class CustomerServiceTest {
 
         customerService = new CustomerServiceImpl(customerRepository);
 
-        customer = new Customer();
+        Customer customer = new Customer();
 
         customer.setFirstName("kayne");
         customer.setLastName("frank");
@@ -95,27 +106,15 @@ class CustomerServiceTest {
     }
 
     @Test
-    void addCustomer(){
-
-
-        //when
-        customerService.save(customer);
-
-        //then
-        ArgumentCaptor<Customer>customerArgumentCaptor=
-                ArgumentCaptor.forClass(Customer.class);
-        verify(customerRepository).save(customerArgumentCaptor.capture());
-
-        Customer capturedCustomer = customerArgumentCaptor.getValue();
-
-        assertThat(capturedCustomer).isEqualTo(customer);
-
-    }
-
-    @Test
     void checkDeleteCustomer(){
 
+        Customer customer = new Customer();
 
+        customer.setFirstName("kayne");
+        customer.setLastName("frank");
+        customer.setEmail("frank@gmail.com");
+        customer.setGender(Gender.MALE);
+        customerService.save(customer);
         //when
         customerService.save(customer);
 
