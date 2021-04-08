@@ -10,97 +10,79 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.rmi.CORBA.StubDelegate;
-
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class CustomerServiceTest {
 
-    @Mock
+    @Autowired
     private CustomerRepository customerRepository;
+
+    @Mock
+    private CustomerRepository customerMockRepository;
     private CustomerService customerService;
 
     private static Logger logger = LoggerFactory.getLogger(CustomerServiceTest.class);
 
+    String firstName = "kanye";
+    String lastName = "frank";
+    String email = "frank@gmail.com";
+    Gender gender = Gender.MALE;
+
     @BeforeEach
     void setUp(){
-        customerService = new CustomerServiceImpl(customerRepository);
+        customerService = new CustomerServiceImpl(customerMockRepository);
 
-        Customer customer = new Customer();
-
-        customer.setFirstName("kayne");
-        customer.setLastName("frank");
-        customer.setEmail("frank@gmail.com");
-        customer.setGender(Gender.MALE);
-        customerService.save(customer);
+        customerMockRepository.save(Customer.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .gender(gender)
+                .build()
+        );
     }
 
     @AfterEach
     void clean(){
-        customerRepository.deleteAll();
+        customerMockRepository.deleteAll();
     }
 
-
     @Test
-    @Transactional
     public void testFindByFirstName(){
-
-        String firstName = "kanye";
-        String lastName = "frank";
-        String email = "frank@gmail.com";
-        Gender gender = Gender.MALE;
-
-        customerRepository.save(Customer.builder()
-            .firstName(firstName)
-            .lastName(lastName)
-            .email(email)
-            .gender(gender)
-            .build()
-        );
 
         logger.info("*** test FindById Method ***");
 
-        List<Customer> foundCustomer = customerRepository.findAll();
+        List<Customer> foundCustomer = customerRepository.findByFirstName(firstName);
 
         Customer customer = foundCustomer.get(0);
 
         assertThat(customer.getFirstName()).isEqualTo(firstName);
-        logger.info("result is : " + foundCustomer.get(0).toString());
+        logger.info("result is : " + foundCustomer.get(0).getLastName());
 
     }
 
     @Test
     void getAllCustomers(){
 
-        customerService = new CustomerServiceImpl(customerRepository);
-
-        Customer customer = new Customer();
-
-        customer.setFirstName("kayne");
-        customer.setLastName("frank");
-        customer.setEmail("frank@gmail.com");
-        customer.setGender(Gender.MALE);
-        customerService.save(customer);
-
         //when
         customerService.findAll();
 
         //then
-        verify(customerRepository).findAll();
+        verify(customerMockRepository).findAll();
 
         System.out.println(customerService.findAll().size());
     }
