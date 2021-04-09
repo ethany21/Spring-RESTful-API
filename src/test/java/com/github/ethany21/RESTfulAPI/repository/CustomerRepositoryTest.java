@@ -5,18 +5,20 @@ import com.github.ethany21.RESTfulAPI.model.Gender;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@RequiredArgsConstructor
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 class CustomerRepositoryTest {
 
-    private final CustomerRepository repository;
+    @Autowired
+    private CustomerRepository repository;
 
     @Test
     public void findCustomer(){
@@ -30,7 +32,12 @@ class CustomerRepositoryTest {
 
         repository.save(customer);
 
-        assertThat(repository.findByFirstName("John").get(1).getLastName()).isEqualTo("Lark");
+        Customer test1 = repository.findByFirstName("John").get(1);
+        Customer test2 = repository.findByFirstName("John").get(0);
+
+
+        assertThat(test2.getLastName()).isEqualTo("Michael");
+        assertThat(test1.getLastName()).isEqualTo("Lark");
 
 
     }
