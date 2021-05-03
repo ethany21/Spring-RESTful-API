@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.jws.Oneway;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,11 +31,12 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 class CustomerServiceTest {
 
+    @Mock
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerRepository customerMockRepository;
 
     @Mock
-    private CustomerRepository customerMockRepository;
+    @Autowired
     private CustomerService customerService;
 
     private static Logger logger = LoggerFactory.getLogger(CustomerServiceTest.class);
@@ -66,7 +69,7 @@ class CustomerServiceTest {
 
         logger.info("*** test FindById Method ***");
 
-        List<Customer> foundCustomer = customerRepository.findByFirstName(firstName);
+        List<Customer> foundCustomer = customerMockRepository.findByFirstName(firstName);
 
         Customer customer = foundCustomer.get(0);
 
@@ -103,7 +106,7 @@ class CustomerServiceTest {
         customerService.delete(customer);
         ArgumentCaptor<Customer>customerArgumentCaptor=
                 ArgumentCaptor.forClass(Customer.class);
-        verify(customerRepository).delete(customerArgumentCaptor.capture());
+        verify(customerMockRepository).delete(customerArgumentCaptor.capture());
         assertThat(customerService.findAll().size()).isEqualTo(0);
     }
 
