@@ -2,15 +2,16 @@ package com.github.ethany21.RESTfulAPI.repository;
 
 import com.github.ethany21.RESTfulAPI.model.Customer;
 import com.github.ethany21.RESTfulAPI.model.Gender;
-import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -19,6 +20,31 @@ class CustomerRepositoryTest {
 
     @Autowired
     private CustomerRepository repository;
+
+    String firstName = "kanye";
+    String lastName = "frank";
+    String email = "frank@gmail.com";
+    Gender gender = Gender.MALE;
+
+    @BeforeEach
+    void setUp(){
+
+        repository.save(Customer.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .gender(gender)
+                .build()
+        );
+    }
+
+    @AfterEach
+    void clean(){
+        repository.deleteAll();
+    }
+
+
+
 
     @Test
     public void findCustomer(){
@@ -39,6 +65,17 @@ class CustomerRepositoryTest {
         assertThat(test2.getLastName()).isEqualTo("Michael");
         assertThat(test1.getLastName()).isEqualTo("Lark");
 
+
+    }
+
+    @Test
+    public void testFindByFirstName(){
+
+        List<Customer> foundCustomer = repository.findByFirstName(firstName);
+
+        Customer customer = foundCustomer.get(0);
+
+        assertThat(customer.getFirstName()).isEqualTo(firstName);
 
     }
 
